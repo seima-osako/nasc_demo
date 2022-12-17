@@ -37,7 +37,7 @@ show_metrics = pd.DataFrame(data=[[Accuracy , Precision, Recall, FPR]]).T
 trace1 = go.Bar(x = (show_metrics[0].values), 
                 y = ['正解率', '精度', '再現率', '偽陽性率'], text = np.round_(show_metrics[0].values,4),
                 textposition = 'auto',
-                orientation = 'h', opacity = 0.8, marker=dict(color=['gold', 'lightgreen', 'lightcoral', 'lightskyblue'],line=dict(color='#000000',width=1.5)))
+                orientation = 'h', opacity = 0.8, marker=dict(color=['gold', 'lightgreen', 'lightskyblue', 'lightcoral'],line=dict(color='#000000',width=1.5)))
 trace2 = px.imshow(confmat, x = ["耕作地 (pred)","非耕作地 (pred)"], y = ["耕作地 (true)","非耕作地 (true)"], text_auto=True).update_layout(showlegend=False)
 trace2 = go.Figure(trace2.data, trace2.layout)
 
