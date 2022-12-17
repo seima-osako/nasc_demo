@@ -50,12 +50,12 @@ gdf = gdf.drop(columns=['R3_result', 'R4_result', 'land_cover', 'abandoned_label
 gdf = pd.merge(gdf, df_test[['OBJECTID', 'R4_result', 'target', 'pred_target', 'lgbm_proba']], on=['OBJECTID'])
 
 st.sidebar.write("### 背景地図")
-    bm = st.selectbox(
-        "Please select basemap",
-        ( "Esri-Satellite", "Google-Maps", "Google-Satellite-Hybrid"),
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled,
-    )
+bm = st.selectbox(
+    "Please select basemap",
+    ( "Esri-Satellite", "Google-Maps", "Google-Satellite-Hybrid"),
+    label_visibility=st.session_state.visibility,
+    disabled=st.session_state.disabled,
+)
 
 
 basemaps = {
