@@ -3,4 +3,5 @@ pandas
 folium
 streamlit
 geopandas
+scikit-learn
 streamlit_folium
