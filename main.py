@@ -13,7 +13,7 @@ from plotly.subplots import make_subplots
 from sklearn.metrics import confusion_matrix
 
 st.set_page_config(layout="wide")
-st.write("## 若穂綿内の耕作地・非耕作地分類結果")
+st.write("## 若穂綿内における耕作地/非耕作地の分類結果")
 st.write("")
 st.sidebar.write("### 閾値")
 thresholds = st.sidebar.slider("thresholds", min_value=0.0, max_value=1.0, step=0.01, value=0.5)
@@ -93,7 +93,7 @@ for r in gdf.itertuples():
       geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'red', 'weight': 2})
     else:
       geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'blue', 'weight': 2})
-    folium.Popup(f'農地調査結果：{r.R4_result}<br>非耕作地の確率＝{round(r.lgbm_proba, 3)}', max_width=1000, max_height=2500).add_to(geo_j)
+    folium.Popup(f'令和4年度農地調査結果：{r.R4_result}<br>非耕作地の確率＝{round(r.lgbm_proba, 3)}', max_width=1000, max_height=2500).add_to(geo_j)
     geo_j.add_to(m)
 
 folium_static(m, width=1000, height=500)
