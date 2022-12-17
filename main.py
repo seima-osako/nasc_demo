@@ -14,7 +14,7 @@ from sklearn.metrics import confusion_matrix
 
 st.set_page_config(layout="wide")
 st.write("## 若穂綿内の耕作地・非耕作地分類結果")
-
+st.write("")
 st.sidebar.write("### 閾値")
 thresholds = st.sidebar.slider("thresholds", min_value=0.0, max_value=1.0, step=0.01, value=0.5)
 
@@ -22,7 +22,7 @@ df_test = pd.read_csv('data/df_test.csv')
 df_test['pred_target'] = df_test['lgbm_proba'].apply(lambda x: 1 if x >= thresholds else 0)
 df_test = df_test.sort_values(by='lgbm_proba')
 
-st.write("### Test区画に対する汎化性能")
+st.write("### 評価データに対する性能")
 fig = make_subplots(rows=1, cols=2, print_grid=False, subplot_titles=('Metrics', 'Confusion Matrix'))
 tn, fp, fn, tp = confusion_matrix(df_test['target'], df_test['pred_target']).flatten()
 confmat = confusion_matrix(df_test['target'], df_test['pred_target'])
@@ -43,7 +43,6 @@ trace2 = go.Figure(trace2.data, trace2.layout)
 
 fig.append_trace(trace1,1,1)
 fig.add_trace(trace2.data[0],1,2)
-fig['layout'].update(showlegend=False, plot_bgcolor='rgba(240, 240, 240, 0.95)', paper_bgcolor='rgba(240, 240, 240, 0.95)', margin=dict(b=100))
 st.plotly_chart(fig, use_container_width=True)
 
 
@@ -55,7 +54,7 @@ gdf = pd.merge(gdf, df_test[['OBJECTID', 'R4_result', 'target', 'pred_target', '
 st.sidebar.write("### 背景地図")
 bm = st.sidebar.radio(
     "Please select basemap",
-    ( "Esri-Satellite", "Google-Maps", "Google-Satellite-Hybrid")
+    ("Google-Satellite-Hybrid", "Google-Maps", "Esri-Satellite")
 )
 
 basemaps = {
@@ -94,7 +93,7 @@ for r in gdf.itertuples():
       geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'red', 'weight': 2})
     else:
       geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'blue', 'weight': 2})
-    folium.Popup(f'農地調査結果：{r.R4_result}', max_width=1000, max_height=2500).add_to(geo_j)
+    folium.Popup(f'農地調査結果：{r.R4_result}<br>非耕作地の確率＝{round(r.lgbm_proba, 3)}', max_width=1000, max_height=2500).add_to(geo_j)
     geo_j.add_to(m)
 
 folium_static(m, width=1000, height=500)
