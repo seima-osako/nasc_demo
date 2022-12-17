@@ -12,15 +12,16 @@ from plotly.subplots import make_subplots
 from sklearn.metrics import confusion_matrix
 
 st.set_page_config(layout="wide")
-st.write("## 若穂綿内")
+st.write("## 若穂綿内の耕作地・非耕作地分類結果")
 
 st.sidebar.write("### 閾値")
 thresholds = st.sidebar.slider("thresholds", min_value=0.0, max_value=1.0, step=0.1, value=0.5)
 
 df_test = pd.read_csv('data/df_test.csv')
 df_test['pred_target'] = df_test['lgbm_proba'].apply(lambda x: 1 if x >= thresholds else 0)
-
 df_test = df_test.sort_values(by='lgbm_proba')
+
+st.write("### Test区画に対する汎化性能")
 fig = make_subplots(rows=1, cols=2, print_grid=False)
 tn, fp, fn, tp = confusion_matrix(df_test['target'], df_test['pred_target']).flatten()
 confmat = confusion_matrix(df_test['target'], df_test['pred_target'])
@@ -42,3 +43,58 @@ trace2 = go.Figure(trace2.data, trace2.layout)
 fig.append_trace(trace1,1,1)
 fig.add_trace(trace2.data[0],1,2)
 st.plotly_chart(fig, use_container_width=True)
+
+
+gdf = gpd.read_file('data/polygon_wakaho.geojson')
+gdf = gdf.drop(columns=['R3_result', 'R4_result', 'land_cover', 'abandoned_label'])
+gdf = pd.merge(gdf, df_test[['OBJECTID', 'R4_result', 'target', 'pred_target', 'lgbm_proba']], on=['OBJECTID'])
+
+st.sidebar.write("### 背景地図")
+    bm = st.selectbox(
+        "Please select basemap",
+        ( "Esri-Satellite", "Google-Maps", "Google-Satellite-Hybrid"),
+        label_visibility=st.session_state.visibility,
+        disabled=st.session_state.disabled,
+    )
+
+
+basemaps = {
+    'Google-Maps': folium.TileLayer(
+        tiles = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+        attr = 'Google',
+        name = 'Google Maps',
+        overlay = True,
+        control = True
+    ),
+    'Google-Satellite-Hybrid': folium.TileLayer(
+        tiles = 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        attr = 'Google',
+        name = 'Google Satellite',
+        overlay = True,
+        control = True
+    ),
+    'Esri-Satellite': folium.TileLayer(
+        tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attr = 'Esri',
+        name = 'Esri Satellite',
+        overlay = True,
+        control = True
+    )
+}
+
+st.write("#### True=Pred（青色） / True!=Pred（赤色）")
+
+m = folium.Map(location=[36.61979182743826, 138.27179683757538], zoom_start=15)
+basemaps[bm].add_to(m)
+
+for r in gdf.itertuples():
+    sim_geo = gpd.GeoSeries(r.geometry).simplify(tolerance=0.001)
+    geo_j = sim_geo.to_json()
+    if r.target!=r.pred_target:
+      geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'red', 'weight': 2})
+    else:
+      geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'blue', 'weight': 2})
+    folium.Popup(f'農地調査結果：{r.R4_result}', max_width=1000, max_height=2500).add_to(geo_j)
+    geo_j.add_to(m)
+
+folium_static(m)
