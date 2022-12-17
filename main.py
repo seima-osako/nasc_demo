@@ -90,10 +90,10 @@ for r in gdf.itertuples():
     sim_geo = gpd.GeoSeries(r.geometry).simplify(tolerance=0.001)
     geo_j = sim_geo.to_json()
     if r.target!=r.pred_target:
-      geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'red', 'weight': 2})
+      geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'red', 'fillOpacity': 0.7, 'weight': 1.5})
     else:
       geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {'color' : 'black', 'fillColor': 'blue', 'weight': 2})
-    folium.Popup(f'令和4年度農地調査結果：{r.R4_result}<br>非耕作地の確率＝{round(r.lgbm_proba, 3)}', max_width=1000, max_height=2500).add_to(geo_j)
+    folium.Popup(f'OBJECTID：{r.OBJECTID}<br>令和4年度 農地調査結果：{r.R4_result}<br>非耕作地である確率＝{round(r.lgbm_proba, 3)}', max_width=1000, max_height=2500).add_to(geo_j)
     geo_j.add_to(m)
 
 folium_static(m, width=1000, height=500)
