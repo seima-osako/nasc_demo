@@ -15,11 +15,12 @@ st.set_page_config(layout="wide")
 st.write("## 若穂綿内")
 
 st.sidebar.write("### 閾値")
-growth_rate = st.sidebar.slider("thresholds", min_value=0.0, max_value=1.0, step=0.1, value=0.5)
+thresholds = st.sidebar.slider("thresholds", min_value=0.0, max_value=1.0, step=0.1, value=0.5)
 
 df_test = pd.read_csv('data/df_test.csv')
+df_test['pred_target'] = df_test['lgbm_proba'].apply(lambda x: 1 if x >= thresholds else 0)
 
-
+df_test = df_test.sort_values(by='lgbm_proba')
 fig = make_subplots(rows=1, cols=2, print_grid=False)
 tn, fp, fn, tp = confusion_matrix(df_test['target'], df_test['pred_target']).flatten()
 confmat = confusion_matrix(df_test['target'], df_test['pred_target'])
