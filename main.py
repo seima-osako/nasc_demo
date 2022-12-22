@@ -57,14 +57,13 @@ trace1 = go.Bar(
 )
 trace2 = px.imshow(
     confmat,
-    x=["耕作地 (pred)", "非耕作地 (pred)"],
-    y=["耕作地 (true)", "非耕作地 (true)"],
+    x=["耕作地 (予測)", "非耕作地 (予測)"],
+    y=["耕作地 (正解)", "非耕作地 (正解)"],
     text_auto=True,
 )
-trace2 = go.Figure(trace2.data, trace2.layout)
 
 fig.append_trace(trace1, 1, 1)
-fig.add_trace(trace2.data[0], 1, 2)
+fig.append_trace(trace2.data[0], 1, 2)
 fig.update_annotations(font_size=25)
 fig.update_layout(
     font_size=20,
@@ -120,7 +119,7 @@ basemaps = {
     ),
 }
 
-st.write("#### True=Pred（青色） / True!=Pred（赤色）")
+st.write("#### 予測＝正解（青色） / 予測！＝正解（赤色）")
 
 m = folium.Map(location=[36.61979182743826, 138.27179683757538], zoom_start=14)
 basemaps[bm].add_to(m)
