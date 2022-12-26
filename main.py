@@ -15,7 +15,7 @@ from sklearn.metrics import confusion_matrix
 st.set_page_config(layout="wide")
 st.write("## 若穂綿内における耕作地/非耕作地の分類結果")
 st.write("")
-st.sidebar.write("### 識別閾値")
+st.sidebar.write("### 識別閾値（＝非耕作地である確率）")
 thresholds = st.sidebar.slider(
     "thresholds", min_value=0.0, max_value=1.0, step=0.01, value=0.5
 )
