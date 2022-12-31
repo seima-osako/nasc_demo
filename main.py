@@ -36,16 +36,17 @@ fig = make_subplots(
 tn, fp, fn, tp = confusion_matrix(df_test["target"], df_test["pred_target"]).flatten()
 confmat = confusion_matrix(df_test["target"], df_test["pred_target"])
 
-Accuracy = round(((tp + tn) / (tp + tn + fp + fn)), 3) * 100  # 正解率
-Precision = round(tp / (tp + fp), 3) * 100  # 精度
+#Accuracy = round(((tp + tn) / (tp + tn + fp + fn)), 3) * 100  # 正解率
+Precision = round(tp / (tp + fp), 3) * 100  # 適合率
 Recall = round(tp / (tp + fn), 3) * 100  # 再現率
 FPR = round(fp / (tn + fp), 3) * 100  # 偽陽性率
+TPF = round(tn / (tn + fn), 3) * 100 # 真陰性率
 
-show_metrics = pd.DataFrame(data=[[Accuracy, Precision, Recall, FPR]]).T
+show_metrics = pd.DataFrame(data=[[Precision, Recall, TPF, FPR]]).T
 
 trace1 = go.Bar(
     x=(show_metrics[0].values),
-    y=["正解率", "適合率", "再現率", "偽陽性率"],
+    y=["適合率", "再現率", "真陰性率", "偽陽性率"],
     text=np.round_(show_metrics[0].values, 4),
     textposition="auto",
     orientation="h",
