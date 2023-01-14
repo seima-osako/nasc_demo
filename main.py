@@ -121,6 +121,7 @@ basemaps = {
 }
 
 st.write("#### 予測＝正解（青色） / 予測！＝正解（赤色）")
+st.write("青い区画が予測と正解ラベルが一致、赤い区画が不一致")
 
 m = folium.Map(location=[36.61979182743826, 138.27179683757538], zoom_start=14)
 basemaps[bm].add_to(m)
@@ -144,6 +145,7 @@ for r in gdf.itertuples():
             style_function=lambda x: {
                 "color": "black",
                 "fillColor": "blue",
+                "fillOpacity": 0.7,
                 "weight": 2,
             },
         )
