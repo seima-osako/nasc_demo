@@ -5,4 +5,5 @@ folium
 streamlit
 geopandas
 scikit-learn
+streamlit-aggrid
 streamlit_folium
