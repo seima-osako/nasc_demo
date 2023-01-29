@@ -189,6 +189,21 @@ vis_gdf_show["pred_target"] = vis_gdf_show["pred_target"].apply(
 )
 vis_gdf_show = vis_gdf_show.rename(columns={"target": "正解", "pred_target": "予測"})
 
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv(index=False).encode('SJIS')
+
+
+csv = convert_df(vis_gdf_show)
+
+st.download_button(
+   "Download",
+   csv,
+   f"{cm_option}.csv",
+   "text/csv",
+   key='download-csv'
+)
+
 AgGrid(
     vis_gdf_show,
     theme="streamlit",
